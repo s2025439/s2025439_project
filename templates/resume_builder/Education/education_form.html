@@ -37,9 +37,9 @@
             {% endfor %}
 
             <div class="d-flex justify-content-between mt-4">
-              <button type="submit" class="btn btn-primary">Save</button>
-              <a href="{% url 'education_list' resume_id %}" class="btn btn-outline-secondary">Cancel</a>
-            </div>
+  <button type="submit" name="action" value="save" class="btn btn-primary">Save</button>
+  <button type="submit" name="action" value="next" class="btn btn-success">Save & Next</button>
+</div>
           </form>
         </div>
       </div>

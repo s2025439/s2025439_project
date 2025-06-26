@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ resume.title }}</title>
+  <style>
+    body {
+      font-family: "Helvetica", "Arial", sans-serif;
+      margin: 40px;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1, h2 {
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    h2 {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+      margin-top: 30px;
+    }
+    .section p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>{{ resume.title }}</h1>
+  <p><strong>Summary:</strong> {{ resume.summary }}</p>
+
+  {% if educations %}
+  <h2>Education</h2>
+  <div class="section">
+    {% for edu in educations %}
+      <p><strong>{{ edu.degree }}</strong>, {{ edu.institution }} ({{ edu.start_year }} - {{ edu.end_year }})</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if experiences %}
+  <h2>Work Experience</h2>
+  <div class="section">
+    {% for exp in experiences %}
+      <p><strong>{{ exp.job_title }}</strong> at {{ exp.company }} ({{ exp.start_date }} – {{ exp.end_date|default:"Present" }})</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if projects %}
+  <h2>Projects</h2>
+  <div class="section">
+    {% for proj in projects %}
+      <p><strong>{{ proj.title }}</strong>: {{ proj.description }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if certifications %}
+  <h2>Certifications</h2>
+  <div class="section">
+    {% for cert in certifications %}
+      <p>{{ cert.name }} ({{ cert.issuer }})</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if skills %}
+  <h2>Technical Skills</h2>
+  <div class="section">
+    {% for skill in skills %}
+      <p>{{ skill.name }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if awards %}
+  <h2>Awards</h2>
+  <div class="section">
+    {% for award in awards %}
+      <p>{{ award.title }} — {{ award.year }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if languages %}
+  <h2>Languages</h2>
+  <div class="section">
+    {% for lang in languages %}
+      <p>{{ lang.name }} — {{ lang.proficiency }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</body>
+</html>

@@ -21,8 +21,8 @@
             {% endfor %}
           </div>
         {% endfor %}
-        <button type="submit" class="btn btn-success">Save</button>
-        <a href="{% url 'language_list' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" name="action" value="save" class="btn btn-primary">Save</button>
+  <button type="submit" name="action" value="next" class="btn btn-success">Save & Next</button>
       </form>
     </div>
   </div>

@@ -17,6 +17,8 @@ from resume_builder.models import (
     Award, Language, TechnicalSkill
 )
 
+
+
 # Forms
 from resume_builder.forms import (
     WorkExperienceForm, EducationForm, ProjectForm,
@@ -37,17 +39,27 @@ class WorkExperienceCreateView(LoginRequiredMixin, CreateView):
     model = WorkExperience
     form_class = WorkExperienceForm
     template_name = 'resume_builder/work_experience/work_experience_form.html'
-    success_url = reverse_lazy('work_experience_list')  #  this should be set
+
+    def dispatch(self, request, *args, **kwargs):
+        self.resume_id = self.kwargs.get('resume_id')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        resume = self.request.user.resumes.first()
-        if not resume:
-            form.add_error(None, "You must create a resume before adding work experience.")
-            return self.form_invalid(form)
-
+        resume = get_object_or_404(Resume, id=self.resume_id, user=self.request.user)
         form.instance.resume = resume
-        print(" form is valid and redirecting...")  #  add this line to test
-        return super().form_valid(form)  #  this line MUST be here
+        self.object = form.save()
+        print("Form is valid and redirecting...")  # Testing log
+
+        action = self.request.POST.get('action')
+        if action == 'next':
+            return redirect('project_create', resume_id=self.resume_id)
+        else:
+            return redirect('work_experience_list', resume_id=self.resume_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['resume_id'] = self.resume_id
+        return context
 
 
 class WorkExperienceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -91,7 +103,13 @@ class EducationCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         resume_id = self.kwargs['resume_id']
         form.instance.resume_id = resume_id
-        return super().form_valid(form)
+        self.object = form.save()
+
+        action = self.request.POST.get('action')
+        if action == 'next':
+            return redirect('work_experience_create', resume_id=resume_id)
+        else:
+            return redirect('education_list', resume_id=resume_id)  # Or use a section review screen
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,6 +117,7 @@ class EducationCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
+        # Not used anymore since form_valid handles redirect manually
         return reverse('work_experience_create', kwargs={'resume_id': self.object.resume.id})
 
 class EducationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -139,12 +158,26 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
     form_class = ProjectForm
     template_name = 'resume_builder/project/project_form.html'
-    success_url = reverse_lazy('project_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.resume_id = self.kwargs.get('resume_id')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        resume = self.request.user.resumes.first()
+        resume = get_object_or_404(Resume, id=self.resume_id, user=self.request.user)
         form.instance.resume = resume
-        return super().form_valid(form)
+        self.object = form.save()
+
+        action = self.request.POST.get('action')
+        if action == 'next':
+            return redirect('technicalskill_create', resume_id=self.resume_id)  # or whichever is your next step
+        else:
+            return redirect('project_list', resume_id=self.resume_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['resume_id'] = self.resume_id
+        return context
 
 class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Project
@@ -184,12 +217,25 @@ class CertificationCreateView(LoginRequiredMixin, CreateView):
     model = Certification
     form_class = CertificationForm
     template_name = 'resume_builder/certification/certification_form.html'
-    success_url = reverse_lazy('certification_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.resume_id = self.kwargs.get('resume_id')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        resume = self.request.user.resumes.first()
+        resume = get_object_or_404(Resume, id=self.resume_id, user=self.request.user)
         form.instance.resume = resume
-        return super().form_valid(form)
+        self.object = form.save()
+
+        action = self.request.POST.get("action")
+        if action == "next":
+            return redirect('award_create', resume_id=self.resume_id)
+        return redirect('certification_list', resume_id=self.resume_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['resume_id'] = self.resume_id
+        return context
 
 class CertificationUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Certification
@@ -229,12 +275,25 @@ class AwardCreateView(LoginRequiredMixin, CreateView):
     model = Award
     form_class = AwardForm
     template_name = 'resume_builder/award/award_form.html'
-    success_url = reverse_lazy('award_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.resume_id = self.kwargs.get('resume_id')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        resume = self.request.user.resumes.first()
+        resume = get_object_or_404(Resume, id=self.resume_id, user=self.request.user)
         form.instance.resume = resume
-        return super().form_valid(form)
+        self.object = form.save()
+
+        action = self.request.POST.get("action")
+        if action == "next":
+            return redirect('language_create', resume_id=self.resume_id)  # Next stop: Languages!
+        return redirect('award_list', resume_id=self.resume_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['resume_id'] = self.resume_id
+        return context
 
 class AwardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Award
@@ -270,16 +329,35 @@ class LanguageListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Language.objects.filter(resume__user=self.request.user)
 
+
 class LanguageCreateView(LoginRequiredMixin, CreateView):
     model = Language
     form_class = LanguageForm
     template_name = 'resume_builder/language/language_form.html'
-    success_url = reverse_lazy('language_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.resume_id = self.kwargs.get('resume_id')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        resume = self.request.user.resumes.first()
+        resume = get_object_or_404(Resume, id=self.resume_id, user=self.request.user)
         form.instance.resume = resume
-        return super().form_valid(form)
+        self.object = form.save()
+
+        action = self.request.POST.get("action")
+
+        if action == "next":
+            # ✅ Clean, correct redirect to detail view
+            return redirect('resume_final_review', resume_id=self.resume_id)
+
+        # Default redirect back to language list
+        return redirect('language_list', resume_id=self.resume_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['resume_id'] = self.resume_id
+        return context
+
 
 class LanguageUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Language
@@ -319,12 +397,25 @@ class TechnicalSkillCreateView(LoginRequiredMixin, CreateView):
     model = TechnicalSkill
     form_class = TechnicalSkillForm
     template_name = 'resume_builder/technicalskill/technicalskill_form.html'
-    success_url = reverse_lazy('technicalskill_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.resume_id = self.kwargs.get('resume_id')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        resume = self.request.user.resumes.first()
+        resume = get_object_or_404(Resume, id=self.resume_id, user=self.request.user)
         form.instance.resume = resume
-        return super().form_valid(form)
+        self.object = form.save()
+
+        action = self.request.POST.get("action")
+        if action == "next":
+            return redirect('certification_create', resume_id=self.resume_id)  # or wherever the user should go next
+        return redirect('technicalskill_list', resume_id=self.resume_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['resume_id'] = self.resume_id
+        return context
 
 class TechnicalSkillUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = TechnicalSkill
@@ -368,34 +459,62 @@ class TemplateChooseView(LoginRequiredMixin, View):
     def get(self, request):
         templates = ResumeTemplate.objects.all()
         return render(request, 'resume_builder/resume/select_before_create.html', {'templates': templates})
-
 class ResumeDownloadView(LoginRequiredMixin, View):
     def get(self, request, pk):
+        return self._generate_pdf(request, pk)
+
+    def post(self, request, pk):
+        return self._generate_pdf(request, pk)
+
+    def _generate_pdf(self, request, pk):
         resume = get_object_or_404(Resume, pk=pk, user=request.user)
-        template_key = resume.template.format_type.lower()  # e.g., 'classic'
-        html_string = render_to_string(f'resume_templates/{template_key}.html', {'resume': resume})
+
+        # Use default fallback if template is missing
+        template_key = resume.template.format_type.lower() if resume.template else 'default'
+
+        # ✅ Add complete context
+        context = {
+            'resume': resume,
+            'educations': resume.educations.all(),
+            'experiences': resume.work_experiences.all(),
+            'projects': resume.projects.all(),
+            'certifications': resume.certifications.all(),
+            'skills': resume.technical_skills.all(),
+            'awards': resume.awards.all(),
+            'languages': resume.languages.all()
+        }
+
+        html_string = render_to_string(
+            f'resume_templates/{template_key}.html',
+            context
+        )
 
         pdf = HTML(string=html_string).write_pdf()
 
         response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'filename="{resume.slug}.pdf"'
+        response['Content-Disposition'] = f'attachment; filename="{resume.slug}.pdf"'
         return response
 
 class ResumeDetailView(LoginRequiredMixin, DetailView):
     model = Resume
     template_name = 'resume_builder/resume/detail.html'
     context_object_name = 'resume'
+    pk_url_kwarg = 'resume_id'  # ✅ This line is crucial!
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         resume = self.object
 
         context['educations'] = resume.educations.all()
-        # context['experiences'] = resume.experiences.all()  # assuming related_name='experiences'
-        # context['projects'] = resume.projects.all()
-        # context['certifications'] = resume.certifications.all()
-        # context['skills'] = resume.skills.all()  # if skills are a related model
-        # return context
+        context['experiences'] = resume.work_experiences.all()
+        context['projects'] = resume.projects.all()
+        context['certifications'] = resume.certifications.all()
+        context['skills'] = resume.technical_skills.all()
+        context['awards'] = resume.awards.all()
+        context['languages'] = resume.languages.all()
+
+        return context
+
 
 class ResumeListView(LoginRequiredMixin, ListView):
     model = Resume
@@ -422,4 +541,46 @@ class ResumeCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.template_id = self.request.GET.get('template')
         self.object = form.save()
-        return redirect('education_create', resume_id=self.object.pk)
+
+        return redirect(reverse('education_create', kwargs={'resume_id': self.object.pk}))
+
+
+class ResumeFinalReviewView(LoginRequiredMixin, DetailView):
+    model = Resume
+    template_name = 'resume_builder/resume/final_review.html'
+    context_object_name = 'resume'
+    pk_url_kwarg = 'resume_id'  # ✅ This tells Django to use resume_id instead of pk
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        resume = self.object
+        context['educations'] = resume.educations.all()
+        context['experiences'] = resume.work_experiences.all()
+        context['projects'] = resume.projects.all()
+        context['certifications'] = resume.certifications.all()
+        context['skills'] = resume.technical_skills.all()
+        context['awards'] = resume.awards.all()
+        context['languages'] = resume.languages.all()
+        return context
+
+class ResumeEditView(LoginRequiredMixin, UpdateView):
+    model = Resume
+    template_name = 'resume_builder/resume/edit.html'
+    context_object_name = 'resume'
+    fields = ['title', 'summary', 'template']
+
+    # Use 'resume_id' from URL instead of default 'pk'
+    pk_url_kwarg = 'resume_id'
+
+    # Limit queryset to resumes owned by the logged-in user
+    def get_queryset(self):
+        return Resume.objects.filter(user=self.request.user)
+
+    # Optional: customize success logic
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # You can add a message here using Django's messages framework if desired
+        return response
+
+    # Where to redirect after saving the resume
+    success_url = reverse_lazy('resume_list')
