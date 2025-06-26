@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Resume, ResumeTemplate, ResumeSection  # include others if needed
 
-# Register your models here.
+admin.site.register(Resume)
+admin.site.register(ResumeTemplate)
+admin.site.register(ResumeSection)

@@ -1,0 +1,25 @@
+{% extends 'resume_base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Your Awards</h4>
+    <a href="{% url 'award_create' %}" class="btn btn-primary">+ Add Award</a>
+  </div>
+
+  {% if awards %}
+    <ul class="list-group">
+      {% for award in awards %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ award.title }}</strong> – {{ award.issuer }}
+            <div class="small text-muted">{{ award.issue_date }}</div>
+          </div>
+          <a href="{% url 'award_detail' award.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-warning">No awards listed yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

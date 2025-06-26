@@ -1,0 +1,25 @@
+{% extends 'resume_base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Your Languages</h4>
+    <a href="{% url 'language_create' %}" class="btn btn-primary">+ Add Language</a>
+  </div>
+
+  {% if languages %}
+    <ul class="list-group">
+      {% for lang in languages %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ lang.name }}</strong> – {{ lang.proficiency }}
+            {% if lang.certification %}<br><small class="text-muted">{{ lang.certification }}</small>{% endif %}
+          </div>
+          <a href="{% url 'language_detail' lang.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-warning">No languages added yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

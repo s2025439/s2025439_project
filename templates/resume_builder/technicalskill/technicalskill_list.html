@@ -1,0 +1,27 @@
+{% extends 'resume_base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Your Technical Skills</h4>
+    <a href="{% url 'technicalskill_create' %}" class="btn btn-primary">+ Add Skill</a>
+  </div>
+
+  {% if technicalskills %}
+    <ul class="list-group">
+      {% for skill in technicalskills %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ skill.technology }}</strong> – {{ skill.proficiency }}
+            <div class="small text-muted">
+              {{ skill.years_experience }} years · {{ skill.last_used }}
+            </div>
+          </div>
+          <a href="{% url 'technicalskill_detail' skill.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-warning">No technical skills listed yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -3,6 +3,15 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
+from django.utils.text import slugify
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.utils.text import slugify
+import uuid
+
+
+
+
 
 # -----------------------------
 # Resume Builder Models
@@ -42,7 +51,7 @@ class Resume(models.Model):
         db_index=True
     )
     title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=300, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
     summary = models.TextField(blank=True)
     tags = models.JSONField(default=list, blank=True)
     template = models.ForeignKey(
@@ -70,6 +79,14 @@ class Resume(models.Model):
 
     def __str__(self):
         return f"{self.user.email} – {self.title}"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+            # Ensure uniqueness by appending random code
+            from uuid import uuid4
+            self.slug += "-" + uuid4().hex[:6]
+        super().save(*args, **kwargs)
 
 
 class ResumeSection(models.Model):
@@ -342,3 +359,4 @@ class Language(models.Model):
 
     def get_proficiency_display(self):
         return self.proficiency
+

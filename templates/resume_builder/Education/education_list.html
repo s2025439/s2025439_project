@@ -1,0 +1,50 @@
+{% extends 'resume_base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle">
+  <h1>My Education</h1>
+</div>
+
+<section class="section">
+  <div class="card">
+    <div class="card-body pt-4">
+      <a href="{% url 'education_create' %}" class="btn btn-success mb-3">+ Add Education</a>
+
+      {% if educations %}
+      <table class="table datatable">
+        <thead>
+          <tr>
+            <th>Degree</th>
+            <th>Institution</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>GPA</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for edu in educations %}
+          <tr>
+            <td>{{ edu.degree }}</td>
+            <td>{{ edu.institution }}</td>
+            <td>{{ edu.start_date }}</td>
+            <td>{{ edu.end_date }}</td>
+            <td>{{ edu.gpa|default:'-' }}</td>
+            <td>
+              <a href="{% url 'education_detail' edu.pk %}" class="btn btn-sm btn-info">View</a>
+              <a href="{% url 'education_update' edu.pk %}" class="btn btn-sm btn-primary">Edit</a>
+              <a href="{% url 'education_delete' edu.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p class="text-muted">No education entries added yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

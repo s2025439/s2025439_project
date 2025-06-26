@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: 'Georgia', serif; margin: 3rem; }
+    h1 { border-bottom: 2px solid #000; padding-bottom: 0.5rem; }
+    .section { margin-top: 2rem; }
+    .section h2 { border-bottom: 1px solid #aaa; font-size: 1.2rem; }
+    p, li { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <h1>{{ resume.title }}</h1>
+  <p>{{ resume.summary }}</p>
+
+  <div class="section">
+    <h2>Work Experience</h2>
+    {% for exp in resume.workexperience_set.all %}
+      <p><strong>{{ exp.job_title }}</strong> — {{ exp.company }} ({{ exp.start_date }} to {{ exp.end_date|default:"Present" }})</p>
+      <p>{{ exp.description }}</p>
+    {% endfor %}
+  </div>
+
+  <div class="section">
+    <h2>Education</h2>
+    {% for edu in resume.education_set.all %}
+      <p><strong>{{ edu.degree }}</strong> — {{ edu.institution }} ({{ edu.start_year }} - {{ edu.end_year|default:"Present" }})</p>
+      <p>{{ edu.description }}</p>
+    {% endfor %}
+  </div>
+</body>
+</html>

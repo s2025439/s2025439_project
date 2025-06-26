@@ -1,0 +1,28 @@
+{% extends "resume_base.html" %}
+{% block title %}Your Resumes{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Your Resumes</h2>
+
+  <!-- Add Resume Button -->
+  <div class="mb-4 text-end">
+    <a href="{% url 'resume_template_select' %}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Create New Resume
+    </a>
+  </div>
+
+  <ul class="list-group">
+    {% for resume in resumes %}
+      <li class="list-group-item">
+        <strong>{{ resume.title }}</strong><br>
+        <a href="{% url 'resume_detail' resume.pk %}">View</a> |
+        <a href="{% url 'resume_select_template' resume.pk %}">Select Template</a> |
+        <a href="{% url 'resume_download' resume.pk %}">Download PDF</a>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-muted">No resumes found.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

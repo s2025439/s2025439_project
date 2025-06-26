@@ -1,0 +1,29 @@
+{% extends 'resume_base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+
+  <!-- Step Title -->
+  <h2 class="mb-4 text-primary">Step 1: Personal Information</h2>
+
+  <!-- Selected Template Info -->
+  <div class="alert alert-info">
+    <strong>Template Selected:</strong>
+    <em>{{ request.GET.template }}</em> — this design will be used in your final PDF resume.
+  </div>
+
+  <!-- Resume Creation Form -->
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- Hidden field to pass selected template -->
+    <input type="hidden" name="template" value="{{ request.GET.template }}">
+
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-success">Save and Continue</button>
+  </form>
+
+</div>
+
+{% endblock %}

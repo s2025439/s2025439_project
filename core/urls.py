@@ -19,13 +19,20 @@ from django.urls import path,include
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import redirect
+
+
 
 web_patterns = [
     path('admin/', admin.site.urls),
     # resume_builder web URLs
     path('web/', include('resume_builder.web.urls')),
     path('web/', include('accounts.web.urls')),
-    path('', include('dashboard.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('dashboard/', include('dashboard.urls')),
+    path('resume/', lambda request: redirect('resume_create'), name='home'),
+    
+
 ]
 apis_patterns = [
     path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),

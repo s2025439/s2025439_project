@@ -1,0 +1,27 @@
+{% extends 'resume_base.html' %}
+{% block content %}
+
+<div class="pagetitle">
+  <h1>Education Detail</h1>
+</div>
+
+<section class="section">
+  <div class="card">
+    <div class="card-body pt-4">
+      <h5 class="card-title">{{ education.degree }} at {{ education.institution }}</h5>
+
+      <p><strong>Location:</strong> {{ education.location }}</p>
+      <p><strong>Field of Study:</strong> {{ education.description|linebreaks }}</p>
+      <p><strong>Start Date:</strong> {{ education.start_date }}</p>
+      <p><strong>End Date:</strong> {{ education.end_date }}</p>
+      <p><strong>GPA:</strong> {{ education.gpa|default:"—" }}</p>
+      <p><strong>Visible on Resume:</strong> {{ education.is_visible|yesno:"Yes,No" }}</p>
+
+      <a href="{% url 'education_update' education.pk %}" class="btn btn-primary">Edit</a>
+      <a href="{% url 'education_delete' education.pk %}" class="btn btn-danger">Delete</a>
+      <a href="{% url 'education_list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

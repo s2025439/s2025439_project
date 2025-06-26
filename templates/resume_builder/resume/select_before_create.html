@@ -1,0 +1,23 @@
+{% extends 'resume_base.html' %}
+{% block title %}Choose Template{% endblock %}
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Choose a Resume Template</h2>
+  <div class="row">
+    {% for template in templates %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          {% if template.thumbnail %}
+            <img src="{{ template.thumbnail.url }}" class="card-img-top" alt="{{ template.name }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ template.name }}</h5>
+            <p class="card-text">{{ template.description }}</p>
+            <a href="{% url 'resume_create' %}?template={{ template.id }}" class="btn btn-primary">Use This Template</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

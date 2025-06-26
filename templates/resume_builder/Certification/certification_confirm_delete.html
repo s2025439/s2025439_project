@@ -1,0 +1,28 @@
+{% extends 'resume_base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow">
+    <div class="card-header bg-secondary text-white">
+      <h5>{{ certification.name }}</h5>
+    </div>
+    <div class="card-body">
+      <p><strong>Issuer:</strong> {{ certification.issuer }}</p>
+      <p><strong>Issue Date:</strong> {{ certification.issue_date }}</p>
+      <p><strong>Expiration Date:</strong> {{ certification.expiration_date|default:"Not applicable" }}</p>
+      <p><strong>Credential ID:</strong> {{ certification.credential_id }}</p>
+      <p><strong>Verification:</strong>
+        {% if certification.verification_url %}
+          <a href="{{ certification.verification_url }}" target="_blank">{{ certification.verification_url }}</a>
+        {% else %}
+          Not provided
+        {% endif %}
+      </p>
+      <p><strong>Skills:</strong> {{ certification.skills.all|join:", " }}</p>
+    </div>
+    <div class="card-footer d-flex justify-content-end">
+      <a href="{% url 'certification_update' certification.pk %}" class="btn btn-primary me-2">Edit</a>
+      <a href="{% url 'certification_delete' certification.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

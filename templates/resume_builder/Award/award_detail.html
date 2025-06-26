@@ -1,0 +1,21 @@
+{% extends 'resume_base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow">
+    <div class="card-header bg-secondary text-white">
+      <h5>{{ award.title }}</h5>
+    </div>
+    <div class="card-body">
+      <p><strong>Issuer:</strong> {{ award.issuer }}</p>
+      <p><strong>Issue Date:</strong> {{ award.issue_date }}</p>
+      <p><strong>Category:</strong> {{ award.category }}</p>
+      <p><strong>Description:</strong><br>{{ award.description|linebreaks }}</p>
+      <p><strong>Impact Metrics:</strong><br>{{ award.impact_metrics|linebreaks }}</p>
+    </div>
+    <div class="card-footer d-flex justify-content-end">
+      <a href="{% url 'award_update' award.pk %}" class="btn btn-primary me-2">Edit</a>
+      <a href="{% url 'award_delete' award.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

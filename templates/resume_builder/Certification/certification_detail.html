@@ -1,0 +1,26 @@
+{% extends 'resume_base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Your Certifications</h4>
+    <a href="{% url 'certification_create' %}" class="btn btn-primary">+ Add Certification</a>
+  </div>
+
+  {% if certifications %}
+    <ul class="list-group">
+      {% for cert in certifications %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ cert.name }}</strong> – {{ cert.issuer }}
+            <div class="small text-muted">Issued: {{ cert.issue_date }}</div>
+          </div>
+          <a href="{% url 'certification_detail' cert.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-warning">No certifications added yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

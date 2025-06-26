@@ -1,0 +1,23 @@
+{% extends 'resume_base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Your Projects</h4>
+    <a href="{% url 'project_create' %}" class="btn btn-primary">+ Add Project</a>
+  </div>
+
+  {% if projects %}
+    <div class="list-group">
+      {% for project in projects %}
+        <a href="{% url 'project_detail' project.pk %}" class="list-group-item list-group-item-action">
+          <strong>{{ project.title }}</strong> – {{ project.role }}
+          <div class="small text-muted">{{ project.start_date }} to {{ project.end_date|default:"Present" }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-warning">No projects added yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

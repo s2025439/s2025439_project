@@ -1,0 +1,23 @@
+{% extends "resume_base.html" %}
+{% block title %}{{ resume.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>{{ resume.title }}</h2>
+  <p><strong>Summary:</strong> {{ resume.summary }}</p>
+
+  <h4>Template:</h4>
+  <p>{{ resume.template }}</p>
+
+  <h4>Experience:</h4>
+  <ul>
+    {% for exp in resume.workexperience_set.all %}
+      <li>{{ exp.job_title }} at {{ exp.company }} ({{ exp.start_date }} - {{ exp.end_date|default:"Present" }})</li>
+    {% empty %}
+      <li>No work experience added.</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'resume_download' resume.pk %}" class="btn btn-primary">Download PDF</a>
+</div>
+{% endblock %}

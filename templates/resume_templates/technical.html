@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: 'Courier New', monospace; margin: 2rem; background: #f9f9f9; color: #222; }
+    h1 { color: #444; }
+    code { background-color: #e0e0e0; padding: 2px 4px; }
+    .section { margin-bottom: 2rem; }
+    .tagline { font-size: 0.9rem; color: #555; }
+  </style>
+</head>
+<body>
+  <h1>{{ resume.title }}</h1>
+  <p class="tagline">{{ resume.summary }}</p>
+
+  <div class="section">
+    <h2>Certifications</h2>
+    {% for cert in resume.certification_set.all %}
+      <p>
+        <code>{{ cert.name }}</code> — {{ cert.issuer }} ({{ cert.issue_date }})
+        {% if cert.verification_url %}
+          | <a href="{{ cert.verification_url }}">{{ cert.verification_url }}</a>
+        {% endif %}
+      </p>
+    {% endfor %}
+  </div>
+
+  <div class="section">
+    <h2>Awards</h2>
+    {% for award in resume.award_set.all %}
+      <p><strong>{{ award.title }}</strong> — {{ award.issuer }} ({{ award.issue_date }})<br>
+      {{ award.description }}</p>
+    {% endfor %}
+  </div>
+</body>
+</html>

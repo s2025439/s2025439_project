@@ -1,0 +1,21 @@
+{% extends 'resume_base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow">
+    <div class="card-header bg-secondary text-white">
+      <h5>{{ technicalskill.technology }}</h5>
+    </div>
+    <div class="card-body">
+      <p><strong>Proficiency:</strong> {{ technicalskill.proficiency }}</p>
+      <p><strong>Experience:</strong> {{ technicalskill.years_experience }} years</p>
+      <p><strong>Last Used:</strong> {{ technicalskill.last_used }}</p>
+      <p><strong>Projects:</strong> {{ technicalskill.project_count }}</p>
+      <p><strong>Visible on Resume:</strong> {{ technicalskill.is_visible|yesno:"Yes,No" }}</p>
+    </div>
+    <div class="card-footer d-flex justify-content-end">
+      <a href="{% url 'technicalskill_update' technicalskill.pk %}" class="btn btn-primary me-2">Edit</a>
+      <a href="{% url 'technicalskill_delete' technicalskill.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
